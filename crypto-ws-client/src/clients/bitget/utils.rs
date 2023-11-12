@@ -96,11 +96,10 @@ impl MessageHandler for BitgetMessageHandler {
             return MiscMessage::Other;
         }
         let obj = resp.unwrap();
-
+        let code = obj.get("code").unwrap().as_i64().unwrap();
         if let Some(event) = obj.get("event") {
             match event.as_str().unwrap() {
                 "error" => {
-                    let code = obj.get("code").unwrap().as_i64().unwrap();
                     match code {
                         30030 | 30012 | 30015 => panic!(
                             "Ivalid API credentials. Received {} from {}",
@@ -111,6 +110,10 @@ impl MessageHandler for BitgetMessageHandler {
                 }
                 "subscribe" => info!("Received {} from {}", msg, EXCHANGE_NAME),
                 "unsubscribe" => info!("Received {} from {}", msg, EXCHANGE_NAME),
+                "login" => match code {
+                    0 => info!("Success authorized"),
+                    _ => panic!("Unexpected error. Received {} from {}", msg, EXCHANGE_NAME),
+                },
                 _ => warn!("Received {} from {}", msg, EXCHANGE_NAME),
             }
             MiscMessage::Other
