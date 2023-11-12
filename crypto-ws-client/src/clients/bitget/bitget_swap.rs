@@ -85,7 +85,6 @@ impl BitgetSwapWSClient {
 
         }]
         });
-        info!("{}", timestamp);
         let data = login_msg.to_string();
         self.client.send(&[data]).await
         // let command = format!("
