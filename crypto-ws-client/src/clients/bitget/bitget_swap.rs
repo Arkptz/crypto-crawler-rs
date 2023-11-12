@@ -54,7 +54,7 @@ impl BitgetSwapWSClient {
             api_passphrase: None,
         }
     }
-    pub async fn set_api_keys(
+    pub fn set_api_keys(
         &mut self,
         api_key: Option<String>,
         api_secret: Option<String>,
