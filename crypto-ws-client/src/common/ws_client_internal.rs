@@ -81,7 +81,7 @@ impl<H: MessageHandler> WSClientInternal<H> {
 
     pub async fn send(&self, commands: &[String]) {
         for command in commands {
-            debug!("{}", command);
+            debug!("Sending command... {}", command,);
             if self.command_tx.send(Message::Text(command.to_string())).await.is_err() {
                 break; // break the loop if there is no receiver
             }

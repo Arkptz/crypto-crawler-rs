@@ -102,7 +102,7 @@ impl MessageHandler for BitgetMessageHandler {
                 "error" => {
                     let code = obj.get("code").unwrap().as_i64().unwrap();
                     match code {
-                        30030 => panic!(
+                        30030 | 30012 | 30015 => panic!(
                             "Ivalid API credentials. Received {} from {}",
                             msg, EXCHANGE_NAME
                         ),
