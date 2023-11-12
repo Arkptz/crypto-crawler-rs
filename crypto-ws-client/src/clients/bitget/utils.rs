@@ -99,7 +99,16 @@ impl MessageHandler for BitgetMessageHandler {
 
         if let Some(event) = obj.get("event") {
             match event.as_str().unwrap() {
-                "error" => error!("Received {} from {}", msg, EXCHANGE_NAME),
+                "error" => {
+                    let code = obj.get("code").unwrap().as_i64().unwrap();
+                    match code {
+                        30030 => panic!(
+                            "Ivalid API credentials. Received {} from {}",
+                            msg, EXCHANGE_NAME
+                        ),
+                        _ => panic!("Unexpected error. Received {} from {}", msg, EXCHANGE_NAME),
+                    };
+                }
                 "subscribe" => info!("Received {} from {}", msg, EXCHANGE_NAME),
                 "unsubscribe" => info!("Received {} from {}", msg, EXCHANGE_NAME),
                 _ => warn!("Received {} from {}", msg, EXCHANGE_NAME),
