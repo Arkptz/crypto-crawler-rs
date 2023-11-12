@@ -6,7 +6,7 @@ use std::{
 use tokio_tungstenite::tungstenite::Message;
 
 use log::*;
-use serde_json::Value;
+use serde_json::{json, Number, Value};
 
 use crate::common::{
     command_translator::CommandTranslator,
@@ -96,7 +96,7 @@ impl MessageHandler for BitgetMessageHandler {
             return MiscMessage::Other;
         }
         let obj = resp.unwrap();
-        let code = obj.get("code").unwrap().as_i64().unwrap();
+        let code = obj.get("code").unwrap_or(&json!(0)).as_i64().unwrap();
         if let Some(event) = obj.get("event") {
             match event.as_str().unwrap() {
                 "error" => {
