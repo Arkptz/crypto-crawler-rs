@@ -32,6 +32,20 @@ pub struct BitgetSwapWSClient {
     api_passphrase: Option<String>,
 }
 
+fn get_message(channel: &str) -> String {
+    json!(
+        {
+            "op": "subscribe",
+            "args": [{
+              "instType": "UMCBL",
+              "channel": channel,
+              "instId": "default"
+            }]
+          }
+    )
+    .to_string()
+}
+
 impl BitgetSwapWSClient {
     pub async fn new(tx: std::sync::mpsc::Sender<String>, url: Option<&str>) -> Self {
         let real_url = match url {
@@ -104,9 +118,10 @@ impl BitgetSwapWSClient {
         encode(&code_bytes)
     }
 
-    // pub async fn qq(&self){
-    //     &self.client.send(commands)
-    // }
+    pub async fn subscribe_private_account_channel(&self) {
+        let msg = get_message("account");
+        self.send(&[msg]).await;
+    }
 }
 
 impl_trait!(Trade, BitgetSwapWSClient, subscribe_trade, "trade");
