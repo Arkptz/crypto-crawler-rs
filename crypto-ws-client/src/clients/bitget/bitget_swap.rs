@@ -32,7 +32,7 @@ pub struct BitgetSwapWSClient {
     api_passphrase: Option<String>,
 }
 
-fn get_message(channel: &str) -> String {
+fn get_base_command(channel: &str) -> String {
     json!(
         {
             "op": "subscribe",
@@ -56,7 +56,7 @@ impl BitgetSwapWSClient {
             client: WSClientInternal::connect(
                 EXCHANGE_NAME,
                 real_url,
-                BitgetMessageHandler {authorized: false },
+                BitgetMessageHandler { authorized: false },
                 Some(UPLINK_LIMIT),
                 tx,
             )
@@ -119,8 +119,16 @@ impl BitgetSwapWSClient {
     }
 
     pub async fn subscribe_private_account_channel(&self) {
-        let msg = get_message("account");
-        self.send(&[msg]).await;
+        self.send(&[get_base_command("account")]).await;
+    }
+    pub async fn subscribe_private_positions_channel(&self) {
+        self.send(&[get_base_command("positions")]).await;
+    }
+    pub async fn subscribe_private_orders_channel(&self) {
+        self.send(&[get_base_command("orders")]).await;
+    }
+    pub async fn subscribe_plan_orders_channel(&self) {
+        self.send(&[get_base_command("ordersAlgo")]).await;
     }
 }
 
