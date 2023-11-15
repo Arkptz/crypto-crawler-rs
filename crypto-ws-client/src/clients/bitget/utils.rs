@@ -27,7 +27,9 @@ pub(super) const UPLINK_LIMIT: (NonZeroU32, std::time::Duration) =
     (nonzero!(240u32), std::time::Duration::from_secs(3600));
 
 // MARKET_TYPE: S for SP, M for MC
-pub(super) struct BitgetMessageHandler {}
+pub(super) struct BitgetMessageHandler {
+    pub authorized: bool,
+}
 pub(super) struct BitgetCommandTranslator<const MARKET_TYPE: char> {}
 
 impl<const MARKET_TYPE: char> BitgetCommandTranslator<MARKET_TYPE> {
@@ -100,7 +102,7 @@ impl MessageHandler for BitgetMessageHandler {
             match event.as_str().unwrap() {
                 "error" => {
                     match code {
-                        30030 | 30012 | 30015 | 30004 | 30011 | 30013  => panic!(
+                        30030 | 30012 | 30015 | 30004 | 30011 | 30013 => panic!(
                             "Ivalid API credentials. Received {} from {}",
                             msg, EXCHANGE_NAME
                         ),
@@ -110,7 +112,10 @@ impl MessageHandler for BitgetMessageHandler {
                 "subscribe" => info!("Received {} from {}", msg, EXCHANGE_NAME),
                 "unsubscribe" => info!("Received {} from {}", msg, EXCHANGE_NAME),
                 "login" => match code {
-                    0 => info!("Success authorized"),
+                    0 => {
+                        info!("Success authorized");
+                        self.authorized = true;
+                    }
                     _ => panic!("Unexpected error. Received {} from {}", msg, EXCHANGE_NAME),
                 },
                 _ => warn!("Received {} from {}", msg, EXCHANGE_NAME),

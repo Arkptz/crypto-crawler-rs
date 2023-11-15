@@ -56,7 +56,7 @@ impl BitgetSwapWSClient {
             client: WSClientInternal::connect(
                 EXCHANGE_NAME,
                 real_url,
-                BitgetMessageHandler {},
+                BitgetMessageHandler {authorized: false },
                 Some(UPLINK_LIMIT),
                 tx,
             )
