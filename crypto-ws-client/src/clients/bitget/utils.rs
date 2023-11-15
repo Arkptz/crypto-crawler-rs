@@ -13,7 +13,6 @@ use crate::common::{
     message_handler::{MessageHandler, MiscMessage},
     utils::ensure_frame_size,
 };
-
 pub(crate) const EXCHANGE_NAME: &str = "bitget";
 
 // The total length of multiple channel can not exceeds 4096 bytes, see:
@@ -101,7 +100,7 @@ impl MessageHandler for BitgetMessageHandler {
             match event.as_str().unwrap() {
                 "error" => {
                     match code {
-                        30030 | 30012 | 30015 => panic!(
+                        30030 | 30012 | 30015 | 30004 | 30011 | 30013  => panic!(
                             "Ivalid API credentials. Received {} from {}",
                             msg, EXCHANGE_NAME
                         ),

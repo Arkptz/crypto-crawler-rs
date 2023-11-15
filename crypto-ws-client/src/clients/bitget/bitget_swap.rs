@@ -1,3 +1,7 @@
+use super::{
+    utils::{BitgetCommandTranslator, BitgetMessageHandler, UPLINK_LIMIT},
+    EXCHANGE_NAME,
+};
 use crate::{
     clients::common_traits::{
         Candlestick, Level3OrderBook, OrderBook, OrderBookTopK, Ticker, Trade, BBO,
@@ -12,11 +16,6 @@ use log::info;
 use serde_json::json;
 use sha2::Sha256;
 use std::time::{SystemTime, UNIX_EPOCH};
-
-use super::{
-    utils::{BitgetCommandTranslator, BitgetMessageHandler, UPLINK_LIMIT},
-    EXCHANGE_NAME,
-};
 
 const WEBSOCKET_URL: &str = "wss://ws.bitget.com/mix/v1/stream";
 

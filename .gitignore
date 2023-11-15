@@ -14,3 +14,4 @@ Cargo.lock
 *.iml
 *.project
 *.classpath
+crypto-ws-client/src/clients/bitget/message_models.rs
