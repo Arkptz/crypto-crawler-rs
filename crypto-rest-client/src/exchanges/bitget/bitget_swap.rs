@@ -1,4 +1,4 @@
-use super::utils::http_raw;
+use super::utils::{http_raw, *};
 use crate::error::Result;
 use base64::encode;
 use hmac::{Hmac, Mac};
@@ -86,7 +86,7 @@ impl BitgetSwapRestClient {
         body: Option<&Value>,
         need_signature: Option<bool>,
     ) -> String {
-        let mut headers = match need_signature {
+        let headers = match need_signature {
             Some(need_sign) => {
                 if need_sign {
                     self.create_signature_headers(&method, path, body)
@@ -110,5 +110,50 @@ impl BitgetSwapRestClient {
     pub async fn fetch_open_interest(&self, symbol: &str) -> String {
         let url = format!("/api/mix/v1/market/open-interest?symbol={symbol}");
         self.request("GET", url.as_str(), None, None, None).await
+    }
+
+    pub async fn place_order(
+        &self,
+        symbol: &str,
+        margin_coin: &str,
+        size: &str,
+        side: &str,
+        order_type: &str,
+        price: Option<f64>,
+        time_in_force_value: Option<&String>,
+        client_oid: Option<&String>,
+        reduce_only: Option<bool>,
+        preset_take_profit_price: Option<f64>,
+        preset_stop_loss_price: Option<f64>,
+    ) -> String {
+        let body = create_json_body! {
+            symbol : symbol,
+            marginCoin : margin_coin,
+            size : size,
+            price : price,
+            side : side,
+            orderType : order_type,
+            timeInForceValue : time_in_force_value,
+            clientOid : client_oid,
+            reduceOnly : reduce_only,
+            presetTakeProfitPrice : preset_take_profit_price,
+            presetStopLossPrice : preset_stop_loss_price
+        };
+        self.request("POST", "/api/mix/v1/order/placeOrder", None, Some(&body), true.into()).await
+    }
+
+    pub async fn get_account_list(&self, product_type: &str) -> String {
+        let body = create_json_body! {
+            productType : product_type
+        };
+        let path = format!("/api/mix/v1/account/accounts?productType={}", product_type);
+        self.request(
+            "GET",
+            path.as_str(),
+            None,
+            Some(&body),
+            true.into(),
+        )
+        .await
     }
 }

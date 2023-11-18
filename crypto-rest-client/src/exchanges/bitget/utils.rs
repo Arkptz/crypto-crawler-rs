@@ -9,6 +9,33 @@ use serde_json::Value;
 use std::collections::HashMap;
 use std::{collections::BTreeMap, str::FromStr};
 
+
+
+#[macro_export]
+macro_rules! create_json_body {
+    ($($key:ident : $value:expr, opt),*) => {{
+        use serde_json::{json, Value, Map};
+
+        let mut map: Map<String, Value> = Map::new();
+        $(
+            if let Some(ref v) = $value {
+                map.insert(stringify!($key).to_string(), json!(v));
+            }
+        )*
+        json!(map)
+    }};
+
+    ($($key:ident : $value:expr),*) => {{
+        use serde_json::{json, Value, Map};
+
+        let mut map: Map<String, Value> = Map::new();
+        $(
+            map.insert(stringify!($key).to_string(), json!($value));
+        )*
+        json!(map)
+    }};
+}
+
 fn convert_hashmap_to_headermap(hashmap: HashMap<String, Value>) -> HeaderMap {
     let mut header_map = HeaderMap::new();
 
